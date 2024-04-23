@@ -11,7 +11,4 @@ export const COLUMNS = [
     Header: "Role",
     accessor: "role",
   },
-  {
-    Header: "Actions",
-  },
 ];
