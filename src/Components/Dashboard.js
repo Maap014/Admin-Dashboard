@@ -1,16 +1,45 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { COLUMNS } from "./columns";
-import { useTable, usePagination } from "react-table";
+import {
+  useTable,
+  usePagination,
+  useGlobalFilter,
+  useRowSelect,
+} from "react-table";
+import GlobalFilter from "./GlobalFilter";
+import { CiEdit, CiTrash } from "react-icons/ci";
+import { Checkbox } from "./Checkbox";
 
 const Dashboard = () => {
-  const columns = useMemo(() => COLUMNS, []);
+  const columns = useMemo(() => {
+    return [
+      ...COLUMNS,
+      {
+        Header: "Actions",
+        accessor: (id) => {
+          return (
+            <>
+              <CiEdit style={{ cursor: "pointer" }} />
+              <CiTrash
+                onClick={() => handleDelete(id)}
+                style={{ color: "red", marginLeft: 12, cursor: "pointer" }}
+              />
+            </>
+          );
+        },
+      },
+    ];
+  }, []);
+
   const [data, setData] = useState([]);
   useEffect(() => {
     fetch(
       "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
     )
       .then((res) => res.json())
-      .then((dataInfo) => setData(dataInfo))
+      .then((dataInfo) => {
+        setData(dataInfo);
+      })
       .catch((err) => console.error(err));
   }, []);
 
@@ -21,27 +50,57 @@ const Dashboard = () => {
     headerGroups,
     rows,
     page, // we'll use page here to dispaly the active rows
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
     nextPage,
     previousPage,
-    canNextPage,
-    canPreviousPage,
-    pageOptions,
-    gotoPage,
-    pageCount,
-    state: { pageIndex },
+    setPageSize,
+    setGlobalFilter,
+    selectedFlatRows,
+    state: { pageIndex, pageSize, globalFilter },
   } = useTable(
     {
       columns,
       data,
     },
-    usePagination
+    useGlobalFilter,
+    usePagination,
+    useRowSelect,
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => {
+        return [
+          {
+            id: "selection",
+            Header: ({ getToggleAllRowsSelectedProps }) => (
+              <Checkbox {...getToggleAllRowsSelectedProps()} />
+            ),
+            Cell: ({ row }) => (
+              <Checkbox {...row.getToggleRowSelectedProps()} />
+            ),
+          },
+          ...columns,
+        ];
+      });
+    }
   );
 
-  const nPages = Math.ceil(data?.length / 10);
-  const pageNumbers = [...Array(nPages > 0 ? nPages + 1 : []).keys()].slice(1);
-  console.log(pageNumbers);
+  const [recordsPerPage] = useState(10);
+
+  const numOfTotalPages = Math.ceil(data?.length / recordsPerPage);
+
+  const pageNumbers = [...Array(numOfTotalPages + 1).keys()].slice(1);
+
+  const handleDelete = (id) => {
+    setData(() => data.filter((data) => data.id !== id));
+  };
+
+  console.log(rows.length);
   return (
     <>
+      <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -68,6 +127,10 @@ const Dashboard = () => {
         </tbody>
       </table>
       <div>
+        <span style={{ float: "left" }}>
+          {selectedFlatRows.length} of {rows.length}{" "}
+          {selectedFlatRows.length > 1 ? "rows" : "row"} selected
+        </span>
         <span>
           <strong>
             Page {pageIndex + 1} of {pageOptions.length}{" "}
@@ -82,7 +145,9 @@ const Dashboard = () => {
           disabled={!canPreviousPage}
         >{`<`}</button>
         {pageNumbers.map((pageNumber) => (
-          <button>{pageNumber}</button>
+          <button key={pageNumber} onClick={() => gotoPage(pageNumber - 1)}>
+            {pageNumber}
+          </button>
         ))}
         <button
           onClick={() => nextPage()}
