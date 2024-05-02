@@ -9,8 +9,13 @@ import {
 import GlobalFilter from "./GlobalFilter";
 import { CiEdit, CiTrash } from "react-icons/ci";
 import { Checkbox } from "./Checkbox";
+import Pagination from "./Pagination";
+import EditModal from "./Modals/EditModal";
+import DeleteModal from "./Modals/DeleteModal";
 
 const Dashboard = () => {
+  const [modalEditOPen, setModalEditOpen] = useState(false);
+  const [modalDeleteOPen, setModalDeleteOpen] = useState(false);
   const columns = useMemo(() => {
     return [
       ...COLUMNS,
@@ -19,9 +24,12 @@ const Dashboard = () => {
         accessor: (id) => {
           return (
             <>
-              <CiEdit style={{ cursor: "pointer" }} />
+              <CiEdit
+                onClick={() => setModalEditOpen(true)}
+                style={{ cursor: "pointer" }}
+              />
               <CiTrash
-                onClick={() => handleDelete(id)}
+                onClick={() => setModalDeleteOpen(true)}
                 style={{ color: "red", marginLeft: 12, cursor: "pointer" }}
               />
             </>
@@ -74,8 +82,8 @@ const Dashboard = () => {
         return [
           {
             id: "selection",
-            Header: ({ getToggleAllRowsSelectedProps }) => (
-              <Checkbox {...getToggleAllRowsSelectedProps()} />
+            Header: ({ getToggleAllPageRowsSelectedProps }) => (
+              <Checkbox {...getToggleAllPageRowsSelectedProps()} />
             ),
             Cell: ({ row }) => (
               <Checkbox {...row.getToggleRowSelectedProps()} />
@@ -87,17 +95,9 @@ const Dashboard = () => {
     }
   );
 
-  const [recordsPerPage] = useState(10);
-
-  const numOfTotalPages = Math.ceil(data?.length / recordsPerPage);
-
-  const pageNumbers = [...Array(numOfTotalPages + 1).keys()].slice(1);
-
   const handleDelete = (id) => {
     setData(() => data.filter((data) => data.id !== id));
   };
-
-  console.log(rows.length);
   return (
     <>
       <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
@@ -115,7 +115,10 @@ const Dashboard = () => {
           {page.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr
+                className={row.isSelected ? "selected" : ""}
+                {...row.getRowProps()}
+              >
                 {row.cells.map((cell) => {
                   return (
                     <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
@@ -136,28 +139,31 @@ const Dashboard = () => {
             Page {pageIndex + 1} of {pageOptions.length}{" "}
           </strong>
         </span>
-        <button
-          onClick={() => gotoPage(0)}
-          disabled={!canPreviousPage}
-        >{`<<`}</button>
-        <button
-          onClick={() => previousPage()}
-          disabled={!canPreviousPage}
-        >{`<`}</button>
-        {pageNumbers.map((pageNumber) => (
-          <button key={pageNumber} onClick={() => gotoPage(pageNumber - 1)}>
-            {pageNumber}
-          </button>
-        ))}
-        <button
-          onClick={() => nextPage()}
-          disabled={!canNextPage}
-        >{`>`}</button>
-        <button
-          onClick={() => gotoPage(pageCount - 1)}
-          disabled={!canNextPage}
-        >{`>>`}</button>
+        <Pagination
+          canPreviousPage={canPreviousPage}
+          canNextPage={canNextPage}
+          pageOptions={pageOptions}
+          pageCount={pageCount}
+          gotoPage={gotoPage}
+          nextPage={nextPage}
+          previousPage={previousPage}
+          pageIndex={pageIndex}
+        />
       </div>
+      {modalEditOPen && (
+        <EditModal
+          closeModal={() => {
+            setModalEditOpen(false);
+          }}
+        />
+      )}
+      {modalDeleteOPen && (
+        <DeleteModal
+          closeModal={() => {
+            setModalDeleteOpen(false);
+          }}
+        />
+      )}
     </>
   );
 };
