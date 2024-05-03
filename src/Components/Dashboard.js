@@ -16,20 +16,28 @@ import DeleteModal from "./Modals/DeleteModal";
 const Dashboard = () => {
   const [modalEditOPen, setModalEditOpen] = useState(false);
   const [modalDeleteOPen, setModalDeleteOpen] = useState(false);
+  const [selectedRowId, setSelectedRowId] = useState(null);
+  const [rowToEdit, setRowToEdit] = useState(null);
+
   const columns = useMemo(() => {
     return [
       ...COLUMNS,
       {
         Header: "Actions",
-        accessor: (id) => {
+        accessor: "id",
+        Cell: ({ row }) => {
+          const { id } = row.original;
           return (
             <>
               <CiEdit
-                onClick={() => setModalEditOpen(true)}
+                onClick={() => handleEdit(id)}
                 style={{ cursor: "pointer" }}
               />
               <CiTrash
-                onClick={() => setModalDeleteOpen(true)}
+                onClick={() => {
+                  setSelectedRowId(id);
+                  setModalDeleteOpen(true);
+                }}
                 style={{ color: "red", marginLeft: 12, cursor: "pointer" }}
               />
             </>
@@ -95,9 +103,21 @@ const Dashboard = () => {
     }
   );
 
-  const handleDelete = (id) => {
-    setData(() => data.filter((data) => data.id !== id));
+  const handleDelete = (targetid) => {
+    setData((prevData) => prevData.filter((index) => index.id !== targetid));
   };
+  const handleEdit = (id) => {
+    setRowToEdit(id);
+    setModalEditOpen(true);
+  };
+  // const handleSubmit = (newRow) => {
+  //   setData(
+  //     rows.map((currRow, id) => {
+  //       if (id !== rowToEdit) return currRow;
+  //       return newRow;
+  //     })
+  //   );
+  //};
   return (
     <>
       <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
@@ -112,7 +132,7 @@ const Dashboard = () => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
+          {page.map((row, i) => {
             prepareRow(row);
             return (
               <tr
@@ -155,10 +175,14 @@ const Dashboard = () => {
           closeModal={() => {
             setModalEditOpen(false);
           }}
+          //onSubmit={handleSubmit}
+          defaultValue={rowToEdit !== null && rows[rowToEdit]}
         />
       )}
       {modalDeleteOPen && (
         <DeleteModal
+          handleDelete={() => handleDelete(selectedRowId)}
+          id={selectedRowId}
           closeModal={() => {
             setModalDeleteOpen(false);
           }}
