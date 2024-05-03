@@ -1,6 +1,21 @@
-import React from "react";
+import { useState } from "react";
 
-const Modal = ({ closeModal }) => {
+const Modal = ({ closeModal, defaultValue, onSubmit }) => {
+  const [editedInfo, setEditedInfo] = useState(
+    defaultValue.original || {
+      name: "",
+      email: "",
+      role: "",
+    }
+  );
+  const handleChange = (e) => {
+    setEditedInfo({ ...editedInfo, [e.target.name]: e.target.value });
+  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   onSubmit(editedInfo);
+  //   closeModal();
+  // };
   return (
     <div
       className="modal-container"
@@ -12,24 +27,52 @@ const Modal = ({ closeModal }) => {
         <form action="">
           <div className="form-group">
             <label htmlFor="name">Name</label>
-            <input name="name" type="text" />
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={editedInfo.name}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input name="email" type="text" />
+            <input
+              id="email"
+              name="email"
+              type="text"
+              value={editedInfo.email}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group">
             <label htmlFor="role">Role</label>
-            <select name="role">
-              <option value="0">Select:</option>
-              <option value="1">admin</option>
-              <option value="2">Member</option>
+            <select
+              id="role"
+              name="role"
+              value={editedInfo.roleType}
+              onChange={handleChange}
+            >
+              <option>Select:</option>
+              <option>admin</option>
+              <option>Member</option>
             </select>
             <div className="btn-container">
-              <button type="submit" className="submit-btn btn">
+              <button
+                type="submit"
+                className="submit-btn btn"
+                // onClick={handleSubmit}
+              >
                 Save
               </button>
-              <button className="btn">Cancle</button>
+              <button
+                className="cancle-btn btn"
+                onClick={() => {
+                  closeModal();
+                }}
+              >
+                Cancle
+              </button>
             </div>
           </div>
         </form>
