@@ -73,10 +73,9 @@ const Dashboard = () => {
     gotoPage,
     nextPage,
     previousPage,
-    setPageSize,
     setGlobalFilter,
     selectedFlatRows,
-    state: { pageIndex, pageSize, globalFilter },
+    state: { pageIndex, globalFilter },
   } = useTable(
     {
       columns,
@@ -119,9 +118,19 @@ const Dashboard = () => {
       })
     );
   };
+  const handleGobalDelete = () => {
+    setData((prevData) => prevData.filter((row) => row));
+  };
+
   return (
-    <>
-      <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+    <div className="dashboard-container">
+      <div className="Global-actions-container">
+        <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+        <span className="Global-delete-container">
+          <CiTrash className="Global-delete-icon" onClick={handleGobalDelete} />
+        </span>
+      </div>
+
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -150,26 +159,30 @@ const Dashboard = () => {
           })}
         </tbody>
       </table>
-      <div>
+      <div className="pagination-container">
         <span style={{ float: "left" }}>
           {selectedFlatRows.length} of {rows.length}{" "}
           {selectedFlatRows.length > 1 ? "rows" : "row"} selected
         </span>
-        <span>
-          <strong>
-            Page {pageIndex + 1} of {pageOptions.length}{" "}
-          </strong>
-        </span>
-        <Pagination
-          canPreviousPage={canPreviousPage}
-          canNextPage={canNextPage}
-          pageOptions={pageOptions}
-          pageCount={pageCount}
-          gotoPage={gotoPage}
-          nextPage={nextPage}
-          previousPage={previousPage}
-          pageIndex={pageIndex}
-        />
+        <div className="pag-conatiner">
+          <div>
+            Page <strong> {pageIndex + 1} </strong>of{" "}
+            <strong>{pageOptions.length}</strong>
+          </div>
+
+          <div className="page-num">
+            <Pagination
+              canPreviousPage={canPreviousPage}
+              canNextPage={canNextPage}
+              pageOptions={pageOptions}
+              pageCount={pageCount}
+              gotoPage={gotoPage}
+              nextPage={nextPage}
+              previousPage={previousPage}
+              pageIndex={pageIndex}
+            />
+          </div>
+        </div>
       </div>
       {modalEditOPen && (
         <EditModal
@@ -189,7 +202,7 @@ const Dashboard = () => {
           }}
         />
       )}
-    </>
+    </div>
   );
 };
 
