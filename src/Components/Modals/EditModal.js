@@ -11,11 +11,28 @@ const Modal = ({ closeModal, defaultValue, onSubmit }) => {
   const handleChange = (e) => {
     setEditedInfo({ ...editedInfo, [e.target.name]: e.target.value });
   };
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   onSubmit(editedInfo);
-  //   closeModal();
-  // };
+  const [errors, setErrors] = useState("");
+  const validateForm = () => {
+    if (editedInfo.name && editedInfo.email && editedInfo.role) {
+      return true;
+    } else {
+      let errorMessage = [];
+      for (const [key, value] of Object.entries(editedInfo))
+        if (!value) {
+          errorMessage.push(key);
+        }
+      setErrors(errorMessage.join(" and "));
+      return false;
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    onSubmit(editedInfo);
+    closeModal();
+    console.log(editedInfo);
+  };
   return (
     <div
       className="modal-container"
@@ -57,11 +74,14 @@ const Modal = ({ closeModal, defaultValue, onSubmit }) => {
               <option>admin</option>
               <option>Member</option>
             </select>
+            {errors && (
+              <div className="error">{`Please include: ${errors}`}</div>
+            )}
             <div className="btn-container">
               <button
                 type="submit"
                 className="submit-btn btn"
-                // onClick={handleSubmit}
+                onClick={handleSubmit}
               >
                 Save
               </button>

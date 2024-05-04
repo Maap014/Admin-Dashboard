@@ -30,7 +30,7 @@ const Dashboard = () => {
           return (
             <>
               <CiEdit
-                onClick={() => handleEdit(id)}
+                onClick={() => handleEdit(id - 1)}
                 style={{ cursor: "pointer" }}
               />
               <CiTrash
@@ -110,14 +110,15 @@ const Dashboard = () => {
     setRowToEdit(id);
     setModalEditOpen(true);
   };
-  // const handleSubmit = (newRow) => {
-  //   setData(
-  //     rows.map((currRow, id) => {
-  //       if (id !== rowToEdit) return currRow;
-  //       return newRow;
-  //     })
-  //   );
-  //};
+  const handleSubmit = (newRow) => {
+    setData(
+      rows.map((currRow, id) => {
+        if (id === rowToEdit) return { ...newRow };
+
+        return currRow.original;
+      })
+    );
+  };
   return (
     <>
       <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
@@ -175,7 +176,7 @@ const Dashboard = () => {
           closeModal={() => {
             setModalEditOpen(false);
           }}
-          //onSubmit={handleSubmit}
+          onSubmit={handleSubmit}
           defaultValue={rowToEdit !== null && rows[rowToEdit]}
         />
       )}
