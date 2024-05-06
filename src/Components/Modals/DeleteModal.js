@@ -1,7 +1,12 @@
 import React from "react";
 
-const DeleteModal = ({ closeModal, id, handleDelete }) => {
-  console.log(id);
+const DeleteModal = ({
+  closeModal,
+  id,
+  handleDelete,
+  type,
+  handleGobalDelete,
+}) => {
   return (
     <div
       className="modal-container"
@@ -10,13 +15,19 @@ const DeleteModal = ({ closeModal, id, handleDelete }) => {
       }}
     >
       <div className="modal">
-        <p>DO YOU WANT TO DELETE?</p>
+        <p>
+          {type !== "checked-Delete"
+            ? "DO YOU WANT TO DELETE?"
+            : "DO YOU WANT TO DELETE SELECTED?"}
+        </p>
         <div className="btn-container">
           <button
             type="submit"
             className="submit-btn btn"
             onClick={() => {
-              handleDelete(id);
+              type !== "checked-Delete"
+                ? handleDelete(id)
+                : handleGobalDelete();
               closeModal();
             }}
           >
