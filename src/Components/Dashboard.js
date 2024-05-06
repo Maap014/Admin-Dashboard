@@ -18,6 +18,7 @@ const Dashboard = () => {
   const [modalDeleteOPen, setModalDeleteOpen] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [rowToEdit, setRowToEdit] = useState(null);
+  const [deleteType, setDeleteType] = useState(null);
 
   const columns = useMemo(() => {
     return [
@@ -31,13 +32,14 @@ const Dashboard = () => {
           return (
             <>
               <CiEdit
-                onClick={() => handleEdit(id)}
+                onClick={() => handleEdit(id - 1)}
                 style={{ cursor: "pointer" }}
               />
               <CiTrash
                 onClick={() => {
                   setSelectedRowId(id);
                   setModalDeleteOpen(true);
+                  setDeleteType("monoDelete");
                 }}
                 style={{ color: "red", marginLeft: 12, cursor: "pointer" }}
               />
@@ -132,7 +134,15 @@ const Dashboard = () => {
       <div className="Global-actions-container">
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <span className="Global-delete-container">
-          <CiTrash className="Global-delete-icon" onClick={handleGobalDelete} />
+          <CiTrash
+            className="Global-delete-icon"
+            onClick={() => {
+              selectedFlatRows.length !== 0
+                ? setModalDeleteOpen(true)
+                : setModalDeleteOpen(false);
+              setDeleteType("checked-Delete");
+            }}
+          />
         </span>
       </div>
 
@@ -200,6 +210,8 @@ const Dashboard = () => {
       )}
       {modalDeleteOPen && (
         <DeleteModal
+          type={deleteType}
+          handleGobalDelete={() => handleGobalDelete()}
           handleDelete={() => handleDelete(selectedRowId)}
           id={selectedRowId}
           closeModal={() => {

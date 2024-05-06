@@ -31,7 +31,6 @@ const Modal = ({ closeModal, defaultValue, onSubmit }) => {
 
     onSubmit(editedInfo);
     closeModal();
-    console.log(editedInfo);
   };
   return (
     <div
@@ -80,7 +79,7 @@ const Modal = ({ closeModal, defaultValue, onSubmit }) => {
             <div className="btn-container">
               <button
                 type="submit"
-                className="submit-btn btn"
+                className="save-btn btn"
                 onClick={handleSubmit}
               >
                 Save
