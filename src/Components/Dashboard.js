@@ -27,10 +27,11 @@ const Dashboard = () => {
         accessor: "id",
         Cell: ({ row }) => {
           const { id } = row.original;
+
           return (
             <>
               <CiEdit
-                onClick={() => handleEdit(id - 1)}
+                onClick={() => handleEdit(id)}
                 style={{ cursor: "pointer" }}
               />
               <CiTrash
@@ -119,7 +120,11 @@ const Dashboard = () => {
     );
   };
   const handleGobalDelete = () => {
-    setData((prevData) => prevData.filter((row) => row));
+    setData(
+      data.filter((d) => {
+        return !selectedFlatRows.some((row) => row.original.id === d.id);
+      })
+    );
   };
 
   return (

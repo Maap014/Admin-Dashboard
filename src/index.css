@@ -56,13 +56,27 @@ table th {
   margin-bottom: 0.5rem;
 }
 
+.search-bar {
+  border: 1px solid #ddd;
+  outline-color: #ea43439e;
+  border-radius: 4px;
+  padding: 2px 8px;
+  width: 15rem;
+}
+
 .Global-delete-container {
-  padding: 2px 1px;
   background-color: rgb(223 71 89 / 60%);
   border-radius: 6px;
-  width: 30px;
+  width: 28px;
   height: auto;
   cursor: pointer;
+  display: grid;
+  place-content: center;
+}
+.Global-delete-container:hover {
+  filter: saturate(4);
+  transform: scale(1.1);
+  transition: 350ms ease-in-out;
 }
 .Global-delete-icon {
   color: white;
@@ -100,6 +114,7 @@ button {
   cursor: pointer;
   box-shadow: 0px 5px 5px #ccc;
   color: #6a6767;
+  /* max-height: 22px; */
 }
 
 .modal {
