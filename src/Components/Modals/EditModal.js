@@ -90,7 +90,7 @@ const Modal = ({ closeModal, defaultValue, onSubmit }) => {
                   closeModal();
                 }}
               >
-                Cancle
+                Cancel
               </button>
             </div>
           </div>
