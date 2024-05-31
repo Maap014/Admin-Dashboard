@@ -180,12 +180,12 @@ const Dashboard = () => {
           {selectedFlatRows.length > 1 ? "rows" : "row"} selected
         </span>
         <div className="pag-conatiner">
-          <div>
+          <div style={{ width: "max-content" }}>
             Page <strong> {pageIndex + 1} </strong>of{" "}
             <strong>{pageOptions.length}</strong>
           </div>
 
-          <div className="page-num">
+          <div className="page-num page-btn">
             <Pagination
               canPreviousPage={canPreviousPage}
               canNextPage={canNextPage}
