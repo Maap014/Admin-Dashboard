@@ -13,9 +13,7 @@ code {
 }
 .dashboard-container {
   width: 90%;
-  margin: 1rem auto;
-  overflow-x: auto;
-  overflow-y: hidden;
+  margin: 2rem auto;
 }
 
 table {
@@ -52,6 +50,14 @@ table th {
   text-align: center;
   color: rgb(0, 0, 0);
 }
+
+.table-container table tbody tr:first-child td:first-child {
+  min-width: 50px;
+}
+.table-container table tbody tr:first-child td:not(:first-child) {
+  min-width: 120px;
+}
+
 .Global-actions-container {
   display: flex;
   justify-content: space-between;
@@ -89,7 +95,8 @@ table th {
   justify-content: space-between;
   margin-top: 0.5rem;
   gap: 15px;
-  min-width: 440px;
+  min-width: 320px;
+  flex-wrap: wrap;
 }
 .pag-conatiner {
   display: flex;
@@ -189,4 +196,16 @@ button.save-btn:hover {
   padding: 0.5rem;
   border-radius: 0.3rem;
   margin: 1rem 0;
+}
+
+@media (min-width: 280px) and (max-width: 700px) {
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+@media (min-width: 280px) and (max-width: 370px) {
+  .pag-conatiner {
+    flex-flow: column-reverse;
+  }
 }
