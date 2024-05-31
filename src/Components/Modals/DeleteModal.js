@@ -39,7 +39,7 @@ const DeleteModal = ({
               closeModal();
             }}
           >
-            Cancle
+            Cancel
           </button>
         </div>
       </div>
