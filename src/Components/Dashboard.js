@@ -12,6 +12,7 @@ import { Checkbox } from "./Checkbox";
 import Pagination from "./Pagination";
 import EditModal from "./Modals/EditModal";
 import DeleteModal from "./Modals/DeleteModal";
+import { Spinner } from "./Loader/spinner";
 
 const Dashboard = () => {
   const [modalEditOPen, setModalEditOpen] = useState(false);
@@ -19,6 +20,7 @@ const Dashboard = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [rowToEdit, setRowToEdit] = useState(null);
   const [deleteType, setDeleteType] = useState(null);
+  const [isloading, setIsLoading] = useState(false);
 
   const columns = useMemo(() => {
     return [
@@ -52,14 +54,18 @@ const Dashboard = () => {
 
   const [data, setData] = useState([]);
   useEffect(() => {
+    setIsLoading(true);
     fetch(
       "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
     )
       .then((res) => res.json())
       .then((dataInfo) => {
+        setIsLoading(false);
         setData(dataInfo);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        setIsLoading(false);
+      });
   }, []);
 
   const {
@@ -158,24 +164,45 @@ const Dashboard = () => {
               </tr>
             ))}
           </thead>
+
           <tbody {...getTableBodyProps()}>
-            {page.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr
-                  className={row.isSelected ? "selected" : ""}
-                  {...row.getRowProps()}
-                >
-                  {row.cells.map((cell) => {
-                    return (
-                      <td className="info-column" {...cell.getCellProps()}>
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+            {!isloading ? (
+              <tr>
+                <td colSpan={headerGroups[0].headers.length}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: 400,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Spinner />
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              <>
+                {page.map((row, i) => {
+                  prepareRow(row);
+                  return (
+                    <tr
+                      className={row.isSelected ? "selected" : ""}
+                      {...row.getRowProps()}
+                    >
+                      {row.cells.map((cell) => {
+                        return (
+                          <td className="info-column" {...cell.getCellProps()}>
+                            {cell.render("Cell")}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </>
+            )}
           </tbody>
         </table>
       </div>

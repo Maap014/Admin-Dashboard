@@ -218,3 +218,25 @@ button.save-btn:hover {
     flex-flow: column-reverse;
   }
 }
+
+.spinner {
+  height: 90px;
+  width: 90px;
+  opacity: 25%;
+  animation: spin 1s linear infinite;
+}
+
+@media (max-width: 1030px) {
+  .spinner {
+    height: 50px;
+    width: 50px;
+    opacity: 25%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
